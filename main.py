@@ -66,11 +66,11 @@ def main():
         wait_start()
         LOG.debug("Game started.")
         while (True):
-            LOG.debug("Check atelier.")
+            LOG.debug("Check maya.")
             maya.check_run()
-            LOG.debug("Check caveau.")
+            LOG.debug("Check console.")
             console.check_run()
-            LOG.debug("Check serre.")
+            LOG.debug("Check usine.")
             usine.check_run()
     finally:
         GPIO.cleanup()
