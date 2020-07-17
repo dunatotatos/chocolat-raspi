@@ -44,8 +44,8 @@ def init():
 
     game_state = {"maya": False, "console": False, "usine": False}
     maya = Sensor(11, "maya")
-    console = Sensor(5, "console")
-    usine = Sensor(9, "usine")
+    console = Sensor(9, "console")
+    usine = Sensor(5, "usine")
 
 
 def wait_start():
