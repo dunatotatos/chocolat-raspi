@@ -26,7 +26,8 @@ class Sensor:
         ])
 
     def check_run(self):
-        if self.read() and not game_state[self.name_get]:
+        # not self.read because switches are the opposite.
+        if not self.read() and not game_state[self.name_get]:
             LOG.debug(game_state)
             game_state[self.name_get] = True
             LOG.debug(game_state)
