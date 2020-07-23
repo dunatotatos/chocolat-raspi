@@ -54,7 +54,7 @@ def wait_start():
         subprocess.call(["curl", "-X", "GET", "{}start".format(constant.url)])
         time.sleep(5)
         subprocess.call(
-            ["curl", "-X", "GET", "{}machine".format(constant.url)])
+            ["curl", "-X", "GET", "{}intro".format(constant.url)])
 
 
 def main():
