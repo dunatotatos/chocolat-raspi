@@ -43,9 +43,9 @@ def init():
     global game_state
 
     game_state = {"maya": False, "console": False, "usine": False}
-    maya = Sensor(11, "maya")
-    console = Sensor(9, "console")
-    usine = Sensor(5, "usine")
+    maya = Sensor(constant.MAYA_GPIO, "maya")
+    console = Sensor(constant.CONSOLE_GPIO, "console")
+    usine = Sensor(constant.USINE_GPIO, "usine")
 
 
 def wait_start():
