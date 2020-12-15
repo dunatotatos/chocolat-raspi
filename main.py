@@ -22,7 +22,7 @@ class Sensor:
         LOG.debug("get request send:{}".format(self.name_get))
         subprocess.call([
             "curl", "-m", "1", "-X", "GET", "{}{}".format(
-                constant.url, self.name_get)
+                constant.URL_DST, self.name_get)
         ])
 
     def check_run(self):
@@ -51,10 +51,11 @@ def init():
 def wait_start():
     if listener.server_program() == "start":
         LOG.info("C'est parti !")
-        subprocess.call(["curl", "-X", "GET", "{}start".format(constant.url)])
+        subprocess.call(
+            ["curl", "-X", "GET", "{}start".format(constant.URL_DST)])
         time.sleep(5)
         subprocess.call(
-            ["curl", "-X", "GET", "{}intro".format(constant.url)])
+            ["curl", "-X", "GET", "{}intro".format(constant.URL_DST)])
 
 
 def main():

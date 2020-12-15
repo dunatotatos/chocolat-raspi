@@ -5,9 +5,10 @@ import constant
 
 LOG = logging.getLogger(__name__)
 
+
 def server_program():
-    host = constant.ip  #socket.gethostname()
-    port = constant.port  # initiate port no above 1024
+    host = constant.IP_SRV  # socket.gethostname()
+    port = constant.PORT_SRV  # initiate port no above 1024
     server_socket = socket.socket()  # get instance
     server_socket.bind((host, port))  # bind host address and port together
 
