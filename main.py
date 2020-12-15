@@ -10,15 +10,25 @@ LOG = logging.getLogger(__name__)
 
 
 class Sensor:
+    """
+    Interface with an electronic sensor connected to the board.
+
+    This class is used to check if a sensor is active or not, and send the
+    associated request to Houdini.
+
+    """
+
     def __init__(self, pin, name_get):
         self.pin = pin
         self.name_get = name_get
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     def read(self):
+        """Return the status of the sensor as True or False."""
         return GPIO.input(self.pin)
 
     def get_request(self):
+        """Send a signal to Houdini for this sensor."""
         LOG.debug("get request send:{}".format(self.name_get))
         subprocess.call([
             "curl", "-m", "1", "-X", "GET", "{}{}".format(
@@ -26,6 +36,13 @@ class Sensor:
         ])
 
     def check_run(self):
+        """
+        Check if the sensor is active, and send a request to Houdini.
+
+        This method combines self.read and self.get_request in a simple
+        one-shot method.
+
+        """
         # not self.read because switches are the opposite.
         if not self.read() and not game_state[self.name_get]:
             LOG.debug(game_state)
