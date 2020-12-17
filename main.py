@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import subprocess
 import time
 import logging
+import sys
 
 import constant
 
@@ -37,7 +38,7 @@ class Sensor:
 
     def get_request(self):
         """Send a signal to Houdini for this sensor."""
-        LOG.debug("get request send: %s", self.name_get)
+        LOG.debug("get request send: %s\n", self.name_get)
         subprocess.call([
             "curl", "-m", "1", "-qX", "GET", "{}{}".format(
                 constant.URL_DST, self.name_get)
@@ -52,7 +53,7 @@ class Sensor:
 
         """
         if self.read() and not self.activated:
-            LOG.debug("Activate %s sensor.", self.name_get)
+            LOG.debug("Activate %s sensor.\n", self.name_get)
             self.activated = True
             self.get_request()
 
@@ -82,7 +83,7 @@ class Game:
             time.sleep(0.1)
 
         self.sensors['start'].activated = True
-        LOG.info("Start button pressed.")
+        LOG.info("Start button pressed.\n")
         subprocess.call(
             ["curl", "-qX", "GET", "{}start".format(constant.URL_DST)])
         time.sleep(5)
@@ -92,11 +93,11 @@ class Game:
     def run(self):
         """Wait for events to send triggers."""
         while not self.is_complete():
-            LOG.debug("Check maya.")
+            LOG.debug("Check maya.\n")
             self.sensors['maya'].check_run()
-            LOG.debug("Check console.")
+            LOG.debug("Check console.\n")
             self.sensors['console'].check_run()
-            LOG.debug("Check usine.")
+            LOG.debug("Check usine.\n")
             self.sensors['usine'].check_run()
             time.sleep(0.1)
 
@@ -108,15 +109,15 @@ class Game:
         the associated action.
 
         """
-        LOG.info("Start service.")
+        LOG.info("Start service.\n")
 
         try:
-            LOG.debug("Wait for game start.")
+            LOG.debug("Wait for game start.\n")
             self.wait_start()
-            LOG.debug("Game started.")
+            LOG.debug("Game started.\n")
             self.run()
         finally:
-            LOG.info("Stop service.")
+            LOG.info("Stop service.\n")
             GPIO.cleanup()
 
     def is_complete(self):
@@ -130,5 +131,9 @@ class Game:
 
 
 if __name__ == "__main__":
+    LOG.setLevel(logging.INFO)
+    STDOUT_HANDLER = logging.StreamHandler(sys.stdout)
+    LOG.addHandler(STDOUT_HANDLER)
+
     while True:
         Game().start()
