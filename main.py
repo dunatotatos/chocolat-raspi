@@ -81,6 +81,7 @@ class Game:
         while not self.sensors['start'].read():
             time.sleep(0.1)
 
+        self.sensors['start'].activated = True
         LOG.info("Start button pressed.")
         subprocess.call(
             ["curl", "-X", "GET", "{}start".format(constant.URL_DST)])
@@ -90,8 +91,7 @@ class Game:
 
     def run(self):
         """Wait for events to send triggers."""
-
-        while True:
+        while not self.is_complete():
             LOG.debug("Check maya.")
             self.sensors['maya'].check_run()
             LOG.debug("Check console.")
@@ -118,6 +118,15 @@ class Game:
         finally:
             LOG.info("Stop service.")
             GPIO.cleanup()
+
+    def is_complete(self):
+        """
+        Check if this Game instance still has something to do before next game.
+
+        Return True is Game is complete. False otherwise.
+
+        """
+        return all([s.activated for s in self.sensors.values()])
 
 
 if __name__ == "__main__":
