@@ -126,7 +126,7 @@ class Game:
         Return True is Game is complete. False otherwise.
 
         """
-        return all([s.activated for s in self.sensors.values()])
+        return self.sensors['usine'].activated
 
 
 if __name__ == "__main__":
