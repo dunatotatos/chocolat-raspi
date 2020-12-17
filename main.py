@@ -79,8 +79,7 @@ class Game:
 
     def wait_start(self):
         """Do nothing until the start button is pressed, then exit."""
-
-        while self.sensors['start'].read():
+        while not self.sensors['start'].read():
             time.sleep(0.1)
 
         LOG.info("Start button pressed.")
