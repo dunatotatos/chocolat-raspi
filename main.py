@@ -71,13 +71,18 @@ def init():
 
 
 def wait_start():
-    if listener.server_program() == "start":
-        LOG.info("C'est parti !")
-        subprocess.call(
-            ["curl", "-X", "GET", "{}start".format(constant.URL_DST)])
-        time.sleep(5)
-        subprocess.call(
-            ["curl", "-X", "GET", "{}intro".format(constant.URL_DST)])
+    """Do nothing until the start button is pressed, then exit."""
+    start = Sensor(constant.START_GPIO, "start", reverse=True)
+
+    while start.read():
+        time.sleep(0.1)
+
+    LOG.info("C'est parti !")
+    subprocess.call(
+        ["curl", "-X", "GET", "{}start".format(constant.URL_DST)])
+    time.sleep(5)
+    subprocess.call(
+        ["curl", "-X", "GET", "{}intro".format(constant.URL_DST)])
 
 
 def new_game():
