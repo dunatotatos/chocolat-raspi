@@ -39,7 +39,7 @@ class Sensor:
         """Send a signal to Houdini for this sensor."""
         LOG.debug("get request send: %s", self.name_get)
         subprocess.call([
-            "curl", "-m", "1", "-X", "GET", "{}{}".format(
+            "curl", "-m", "1", "-qX", "GET", "{}{}".format(
                 constant.URL_DST, self.name_get)
         ])
 
@@ -84,10 +84,10 @@ class Game:
         self.sensors['start'].activated = True
         LOG.info("Start button pressed.")
         subprocess.call(
-            ["curl", "-X", "GET", "{}start".format(constant.URL_DST)])
+            ["curl", "-qX", "GET", "{}start".format(constant.URL_DST)])
         time.sleep(5)
         subprocess.call(
-            ["curl", "-X", "GET", "{}intro".format(constant.URL_DST)])
+            ["curl", "-qX", "GET", "{}intro".format(constant.URL_DST)])
 
     def run(self):
         """Wait for events to send triggers."""
