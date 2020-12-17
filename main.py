@@ -29,7 +29,7 @@ class Sensor:
 
     def get_request(self):
         """Send a signal to Houdini for this sensor."""
-        LOG.debug("get request send:{}".format(self.name_get))
+        LOG.debug("get request send: %s", self.name_get)
         subprocess.call([
             "curl", "-m", "1", "-X", "GET", "{}{}".format(
                 constant.URL_DST, self.name_get)
