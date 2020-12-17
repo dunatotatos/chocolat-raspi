@@ -59,6 +59,15 @@ class Sensor:
 
 
 class Game:
+    """
+    One game instance.
+
+    This class provides an interface to manage the logic of a game.
+    Instanciate this class to create a new game instance, and run game.start
+    to wait for the start button signal.
+
+    """
+
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         self.sensors = {
