@@ -28,6 +28,7 @@ class Sensor:
         self.pin = pin
         self.name_get = name_get
         self.reverse = reverse
+        self.activated = False
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     def read(self):
@@ -51,10 +52,9 @@ class Sensor:
         one-shot method.
 
         """
-        if self.read() and not game_state[self.name_get]:
-            LOG.debug(game_state)
-            game_state[self.name_get] = True
-            LOG.debug(game_state)
+        if self.read() and not self.activated:
+            LOG.debug("Activate %s sensor.", self.name_get)
+            self.activated = True
             self.get_request()
 
 
@@ -64,9 +64,7 @@ def init():
     global maya
     global console
     global usine
-    global game_state
 
-    game_state = {"maya": False, "console": False, "usine": False}
     maya = Sensor(constant.MAYA_GPIO, "maya", reverse=True)
     console = Sensor(constant.CONSOLE_GPIO, "console", reverse=True)
     usine = Sensor(constant.USINE_GPIO, "usine", reverse=True)
