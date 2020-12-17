@@ -58,18 +58,6 @@ class Sensor:
             self.get_request()
 
 
-def init():
-    GPIO.setmode(GPIO.BCM)
-
-    global maya
-    global console
-    global usine
-
-    maya = Sensor(constant.MAYA_GPIO, "maya", reverse=True)
-    console = Sensor(constant.CONSOLE_GPIO, "console", reverse=True)
-    usine = Sensor(constant.USINE_GPIO, "usine", reverse=True)
-
-
 def wait_start():
     """Do nothing until the start button is pressed, then exit."""
     start = Sensor(constant.START_GPIO, "start", reverse=True)
@@ -85,6 +73,22 @@ def wait_start():
         ["curl", "-X", "GET", "{}intro".format(constant.URL_DST)])
 
 
+def run_game():
+    """Wait for events to send triggers."""
+    maya = Sensor(constant.MAYA_GPIO, "maya", reverse=True)
+    console = Sensor(constant.CONSOLE_GPIO, "console", reverse=True)
+    usine = Sensor(constant.USINE_GPIO, "usine", reverse=True)
+
+    while True:
+        LOG.debug("Check maya.")
+        maya.check_run()
+        LOG.debug("Check console.")
+        console.check_run()
+        LOG.debug("Check usine.")
+        usine.check_run()
+        time.sleep(0.1)
+
+
 def new_game():
     """
     Start a new game.
@@ -94,20 +98,14 @@ def new_game():
 
     """
     LOG.info("Start service.")
+    GPIO.setmode(GPIO.BCM)
+
     try:
         LOG.debug("Initializing.")
-        init()
         LOG.debug("Wait for game start.")
         wait_start()
         LOG.debug("Game started.")
-        while True:
-            LOG.debug("Check maya.")
-            maya.check_run()
-            LOG.debug("Check console.")
-            console.check_run()
-            LOG.debug("Check usine.")
-            usine.check_run()
-            time.sleep(0.1)
+        run_game()
     finally:
         GPIO.cleanup()
         LOG.info("Stop service.")
