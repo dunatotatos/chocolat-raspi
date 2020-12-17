@@ -16,16 +16,24 @@ class Sensor:
     This class is used to check if a sensor is active or not, and send the
     associated request to Houdini.
 
+    int pin: GPIO number where the positive wire of the sensor is connected
+    str name_get: trailing part of the URL where an HTTP request is sent when
+        the sensor is activated
+    bool reverse: indicate if activated sensor makes GPIO.input() True
+        (default) or False (reverse = True)
+
     """
 
-    def __init__(self, pin, name_get):
+    def __init__(self, pin, name_get, reverse=False):
         self.pin = pin
         self.name_get = name_get
+        self.reverse = reverse
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     def read(self):
         """Return the status of the sensor as True or False."""
-        return GPIO.input(self.pin)
+        # Flip the result if the sensor is reversed
+        return bool(GPIO.input(self.pin)) ^ self.reverse
 
     def get_request(self):
         """Send a signal to Houdini for this sensor."""
@@ -43,8 +51,7 @@ class Sensor:
         one-shot method.
 
         """
-        # not self.read because switches are the opposite.
-        if not self.read() and not game_state[self.name_get]:
+        if self.read() and not game_state[self.name_get]:
             LOG.debug(game_state)
             game_state[self.name_get] = True
             LOG.debug(game_state)
@@ -60,9 +67,9 @@ def init():
     global game_state
 
     game_state = {"maya": False, "console": False, "usine": False}
-    maya = Sensor(constant.MAYA_GPIO, "maya")
-    console = Sensor(constant.CONSOLE_GPIO, "console")
-    usine = Sensor(constant.USINE_GPIO, "usine")
+    maya = Sensor(constant.MAYA_GPIO, "maya", reverse=True)
+    console = Sensor(constant.CONSOLE_GPIO, "console", reverse=True)
+    usine = Sensor(constant.USINE_GPIO, "usine", reverse=True)
 
 
 def wait_start():
