@@ -58,58 +58,60 @@ class Sensor:
             self.get_request()
 
 
-def wait_start():
-    """Do nothing until the start button is pressed, then exit."""
-    start = Sensor(constant.START_GPIO, "start", reverse=True)
+class Game:
+    def __init__(self):
+        GPIO.setmode(GPIO.BCM)
+        self.sensors = {
+            'start': Sensor(constant.START_GPIO, "start", reverse=True),
+            'maya': Sensor(constant.MAYA_GPIO, "maya", reverse=True),
+            'console': Sensor(constant.CONSOLE_GPIO, "console", reverse=True),
+            'usine': Sensor(constant.USINE_GPIO, "usine", reverse=True)
+        }
 
-    while start.read():
-        time.sleep(0.1)
+    def wait_start(self):
+        """Do nothing until the start button is pressed, then exit."""
 
-    LOG.info("C'est parti !")
-    subprocess.call(
-        ["curl", "-X", "GET", "{}start".format(constant.URL_DST)])
-    time.sleep(5)
-    subprocess.call(
-        ["curl", "-X", "GET", "{}intro".format(constant.URL_DST)])
+        while self.sensors['start'].read():
+            time.sleep(0.1)
 
+        LOG.info("Start button pressed.")
+        subprocess.call(
+            ["curl", "-X", "GET", "{}start".format(constant.URL_DST)])
+        time.sleep(5)
+        subprocess.call(
+            ["curl", "-X", "GET", "{}intro".format(constant.URL_DST)])
 
-def run_game():
-    """Wait for events to send triggers."""
-    maya = Sensor(constant.MAYA_GPIO, "maya", reverse=True)
-    console = Sensor(constant.CONSOLE_GPIO, "console", reverse=True)
-    usine = Sensor(constant.USINE_GPIO, "usine", reverse=True)
+    def run(self):
+        """Wait for events to send triggers."""
 
-    while True:
-        LOG.debug("Check maya.")
-        maya.check_run()
-        LOG.debug("Check console.")
-        console.check_run()
-        LOG.debug("Check usine.")
-        usine.check_run()
-        time.sleep(0.1)
+        while True:
+            LOG.debug("Check maya.")
+            self.sensors['maya'].check_run()
+            LOG.debug("Check console.")
+            self.sensors['console'].check_run()
+            LOG.debug("Check usine.")
+            self.sensors['usine'].check_run()
+            time.sleep(0.1)
 
+    def start(self):
+        """
+        Start a new game.
 
-def new_game():
-    """
-    Start a new game.
+        Waits for the start signal, then listen for sensor update to trigger
+        the associated action.
 
-    Waits for the start signal, then listen for sensor update to trigger
-    the associated action.
+        """
+        LOG.info("Start service.")
 
-    """
-    LOG.info("Start service.")
-    GPIO.setmode(GPIO.BCM)
-
-    try:
-        LOG.debug("Initializing.")
-        LOG.debug("Wait for game start.")
-        wait_start()
-        LOG.debug("Game started.")
-        run_game()
-    finally:
-        GPIO.cleanup()
-        LOG.info("Stop service.")
+        try:
+            LOG.debug("Wait for game start.")
+            self.wait_start()
+            LOG.debug("Game started.")
+            self.run()
+        finally:
+            LOG.info("Stop service.")
+            GPIO.cleanup()
 
 
 if __name__ == "__main__":
-    new_game()
+    Game().start()
