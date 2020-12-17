@@ -3,7 +3,6 @@ import subprocess
 import time
 import logging
 
-import listener
 import constant
 
 LOG = logging.getLogger(__name__)
