@@ -70,7 +70,7 @@ class Game:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         self.sensors = {
-            'start': Sensor(constant.START_GPIO, "start", reverse=True),
+            'start': Sensor(constant.START_GPIO, "start", reverse=False),
             'maya': Sensor(constant.MAYA_GPIO, "maya", reverse=True),
             'console': Sensor(constant.CONSOLE_GPIO, "console", reverse=True),
             'usine': Sensor(constant.USINE_GPIO, "usine", reverse=True)
