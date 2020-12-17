@@ -107,6 +107,7 @@ def new_game():
             console.check_run()
             LOG.debug("Check usine.")
             usine.check_run()
+            time.sleep(0.1)
     finally:
         GPIO.cleanup()
         LOG.info("Stop service.")
