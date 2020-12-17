@@ -80,7 +80,14 @@ def wait_start():
             ["curl", "-X", "GET", "{}intro".format(constant.URL_DST)])
 
 
-def main():
+def new_game():
+    """
+    Start a new game.
+
+    Waits for the start signal, then listen for sensor update to trigger
+    the associated action.
+
+    """
     LOG.info("Start service.")
     try:
         LOG.debug("Initializing.")
@@ -88,7 +95,7 @@ def main():
         LOG.debug("Wait for game start.")
         wait_start()
         LOG.debug("Game started.")
-        while (True):
+        while True:
             LOG.debug("Check maya.")
             maya.check_run()
             LOG.debug("Check console.")
@@ -101,4 +108,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    new_game()
