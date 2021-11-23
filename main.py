@@ -3,6 +3,8 @@ import subprocess
 import time
 import logging
 import sys
+from threading import Thread
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import constant
 
@@ -58,6 +60,35 @@ class Sensor:
             self.get_request()
 
 
+class RequestHandler(BaseHTTPRequestHandler):
+    """Provide method to answer a HTTP requests."""
+
+    def do_HEAD(self):
+        """Send headers."""
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+
+    def do_GET(self):
+        """Answer a GET request."""
+        html = """OK"""
+        self.do_HEAD()
+        self.wfile.write(html.encode("UTF-8"))
+
+
+class HTTPStatusServer:
+    """Open and close an HTTP server."""
+
+    def __init__(self):
+        self._server = HTTPServer(
+            (constant.IP_RASPI, constant.PORT_RASPI), RequestHandler)
+        self._server.serve_forever()
+
+    def terminate(self):
+        """Stop HTTP server."""
+        self._server.server_close()
+
+
 class Game:
     """
     One game instance.
@@ -111,6 +142,9 @@ class Game:
         """
         LOG.info("Start service.\n")
 
+        http_server = HTTPStatusServer()
+        http_thread = Thread(target=http_server)
+        http_thread.start()
         try:
             LOG.debug("Wait for game start.\n")
             self.wait_start()
@@ -119,6 +153,7 @@ class Game:
         finally:
             LOG.info("Stop service.\n")
             GPIO.cleanup()
+            http_server.terminate()
 
     def is_complete(self):
         """
