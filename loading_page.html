@@ -1,0 +1,18 @@
+<!-- This page goes on the machine running Houdini. -->
+<html>
+    <body>
+    </body>
+</html>
+<script type="text/javascript">
+    window.setInterval(function() {
+        var opts = {
+            method: 'GET',
+            mode: 'no-cors',
+            headers: {}
+        };
+        fetch('http://10.0.0.10:8080/status', opts)
+            .then(response => response.text())
+            .then(data => document.body.innerText="OK")
+            .catch((error) => document.body.innerText="Loading...")
+    }, 1000)
+</script>
