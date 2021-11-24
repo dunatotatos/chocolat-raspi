@@ -84,10 +84,6 @@ class HTTPStatusServer:
             (constant.IP_RASPI, constant.PORT_RASPI), RequestHandler)
         self._server.serve_forever()
 
-    def terminate(self):
-        """Stop HTTP server."""
-        self._server.server_close()
-
 
 class Game:
     """
@@ -142,9 +138,6 @@ class Game:
         """
         LOG.info("Start service.\n")
 
-        http_server = HTTPStatusServer()
-        http_thread = Thread(target=http_server)
-        http_thread.start()
         try:
             LOG.debug("Wait for game start.\n")
             self.wait_start()
@@ -153,7 +146,6 @@ class Game:
         finally:
             LOG.info("Stop service.\n")
             GPIO.cleanup()
-            http_server.terminate()
 
     def is_complete(self):
         """
@@ -170,5 +162,6 @@ if __name__ == "__main__":
     STDOUT_HANDLER = logging.StreamHandler(sys.stdout)
     LOG.addHandler(STDOUT_HANDLER)
 
+    Thread(target=HTTPStatusServer).start()
     while True:
         Game().start()
